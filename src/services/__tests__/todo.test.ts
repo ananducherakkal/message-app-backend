@@ -1,4 +1,4 @@
-import { getTodo } from "../todo.service";
+import { getTodo } from "../user.service";
 import { createRequest, createResponse } from "../../utils/testUtils";
 
 let req = createRequest({});

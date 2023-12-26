@@ -4,7 +4,7 @@ import {
   testController,
 } from "../../utils/testUtils";
 import * as todoController from "../todo.controller";
-import * as todoService from "../../services/todo.service";
+import * as todoService from "../../services/user.service";
 
 jest.mock("../../services/todo.service");
 
