@@ -21,3 +21,21 @@ export const getUserList = [
     }
   },
 ];
+
+export const createUser = [
+  body("name").notEmpty().withMessage(errorMessage.REQUIRED),
+  body("email").notEmpty().withMessage(errorMessage.REQUIRED),
+  body("password").notEmpty().withMessage(errorMessage.REQUIRED),
+  sendValidatonResponse,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      logger.info("createUser controller: start");
+      const { name, email, password } = req.body;
+
+      await userService.createUser(res, { name, email, password });
+    } catch (error) {
+      logger.error("createUser", error);
+      next(error);
+    }
+  },
+];

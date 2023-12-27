@@ -5,3 +5,9 @@ export type GetUserListQuery = {
   page?: number | string;
   recordsPerPage?: number | string;
 };
+
+export type CreateUser = {
+  name: string;
+  email: string;
+  password: string;
+};

@@ -4,9 +4,13 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import allRoutes from "./routes";
+import { dbConnect } from "./models";
 
 // Enable .env
 dotenv.config();
+
+// Connect database
+dbConnect();
 
 // Initalize express app
 const app: Express = express();

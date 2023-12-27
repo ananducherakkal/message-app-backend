@@ -54,3 +54,9 @@ export const testController = async (
     if (!nextExecuted) break;
   }
 };
+
+export const makePromise = (result: any): Promise<any> => {
+  return new Promise((resolve) => {
+    resolve(result);
+  });
+};
