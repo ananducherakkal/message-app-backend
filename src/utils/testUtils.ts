@@ -19,6 +19,7 @@ export const createResponse = () => {
   const res: any = {};
   res.status = jest.fn((x) => res);
   res.send = jest.fn((x) => res);
+  res.cookie = jest.fn((x) => res);
 
   return res as unknown as Response;
 };

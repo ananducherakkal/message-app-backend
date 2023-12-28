@@ -1,7 +1,18 @@
 import Sequelize from "sequelize";
 
+interface UserAttributes {
+  id?: number;
+  name: string;
+  email: string;
+  password?: string | null;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+interface UserModel extends Sequelize.Model<UserAttributes>, UserAttributes {}
+
 const User = (sequelize: Sequelize.Sequelize) => {
-  const User = sequelize.define("user", {
+  const User = sequelize.define<UserModel>("user", {
     name: {
       type: Sequelize.STRING,
       allowNull: false,

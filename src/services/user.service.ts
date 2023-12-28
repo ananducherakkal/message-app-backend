@@ -19,7 +19,7 @@ export const getUserList = async (
   res: Response,
   params: userType.GetUserList
 ) => {
-  logger.info("getUser service: start");
+  logger.info("getUserList service: start");
 
   const { sort, page, pageSize } = params;
 
@@ -56,7 +56,7 @@ export const getUserById = async (
   res: Response,
   params: userType.GetUserById
 ) => {
-  logger.info("getUser service: start");
+  logger.info("getUserById service: start");
   const { id } = params;
 
   const user = await db.User.findOne({

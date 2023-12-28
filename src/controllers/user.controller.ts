@@ -19,7 +19,7 @@ export const getUserList = [
 
       await userService.getUserList(res, { sort, page, pageSize });
     } catch (error) {
-      logger.error("getUser", error);
+      logger.error("getUserList", error);
       next(error);
     }
   },
@@ -35,7 +35,7 @@ export const getUserById = [
 
       await userService.getUserById(res, { id });
     } catch (error) {
-      logger.error("getUser", error);
+      logger.error("getUserById", error);
       next(error);
     }
   },
