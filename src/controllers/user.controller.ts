@@ -1,20 +1,23 @@
 import { NextFunction, Request, Response } from "express";
 import * as userService from "../services/user.service";
 import logger from "../logger";
-import { GetUserListQuery } from "../types/user";
+import { GetUserByIdParam, GetUserListQuery } from "../types/user.type";
 import sendValidatonResponse from "../middlewares/sendValidationResponse";
 import errorMessage from "../utils/errorMessage";
-import { body } from "express-validator";
+import { body, param, query } from "express-validator";
+
+//========================================Fetch============================================
 
 export const getUserList = [
-  // body("name").notEmpty().withMessage(errorMessage.REQUIRED),
-  // sendValidatonResponse,
+  query("page").optional().default(undefined).isNumeric().toInt(),
+  query("pageSize").optional().default(undefined).isNumeric().toInt(),
+  sendValidatonResponse,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       logger.info("getUserList controller: start");
-      const { sort, page, recordsPerPage } = req.query as GetUserListQuery;
+      const { sort, page, pageSize } = req.query as GetUserListQuery;
 
-      await userService.getUserList(res, {});
+      await userService.getUserList(res, { sort, page, pageSize });
     } catch (error) {
       logger.error("getUser", error);
       next(error);
@@ -22,9 +25,31 @@ export const getUserList = [
   },
 ];
 
+export const getUserById = [
+  param("id").isNumeric().toInt(),
+  sendValidatonResponse,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      logger.info("getUserById controller: start");
+      const { id } = req.params as unknown as GetUserByIdParam;
+
+      await userService.getUserById(res, { id });
+    } catch (error) {
+      logger.error("getUser", error);
+      next(error);
+    }
+  },
+];
+
+//========================================Modify============================================
+
 export const createUser = [
   body("name").notEmpty().withMessage(errorMessage.REQUIRED),
-  body("email").notEmpty().withMessage(errorMessage.REQUIRED),
+  body("email")
+    .notEmpty()
+    .withMessage(errorMessage.REQUIRED)
+    .isEmail()
+    .withMessage(errorMessage.INVALID),
   body("password").notEmpty().withMessage(errorMessage.REQUIRED),
   sendValidatonResponse,
   async (req: Request, res: Response, next: NextFunction) => {

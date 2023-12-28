@@ -7,4 +7,6 @@ router.get("/", userController.getUserList);
 
 router.post("/", userController.createUser);
 
+router.get("/:id", userController.getUserById);
+
 export default router;

@@ -1,30 +1,80 @@
 import logger from "../logger";
 import { db } from "../models";
-import * as userType from "../types/user";
+import * as userType from "../types/user.type";
 import { throwDbError } from "../utils/dbError";
 import { hash } from "../utils/hash";
+import { getLimitOffset } from "../utils/pagination";
+import sanitizeSort from "../utils/sanitizeSort";
 import sendResponse from "../utils/sendResponse";
 import { Response } from "express";
 
 //========================================Fetch============================================
 /**
- * @description Fetch todo by id
- * @param {string} id - todo id
+ * @description Fetch user list
+ * @param {string | string[]} sort - to set order example: name_asc, name_desc
+ * @param {number} page - page number for pagination
+ * @param {number} pageSize - page size for pagination
  */
-export const getUserList = async (res: Response, params: userType.GetUser) => {
+export const getUserList = async (
+  res: Response,
+  params: userType.GetUserList
+) => {
   logger.info("getUser service: start");
 
-  sendResponse(res, 200, { send: { message: "Todo list" } });
+  const { sort, page, pageSize } = params;
+
+  const { limit, offset } = getLimitOffset(page, pageSize);
+  const order = sanitizeSort(sort, ["name", "email"]);
+
+  const users = await db.User.findAll({
+    order,
+    limit,
+    offset,
+    attributes: {
+      exclude: ["password"],
+    },
+  });
+
+  const totalCount = await db.User.findAndCountAll();
+
+  sendResponse(res, 200, {
+    send: {
+      message: "Fetch User successfully",
+      data: {
+        users: users,
+        total_count: totalCount?.count,
+      },
+    },
+  });
 };
 
 /**
- * @description Fetch todo by id
- * @param {string} id - todo id
+ * @description Fetch user by id
+ * @param {number} id - user id
  */
-export const getUserById = async (res: Response, params: userType.GetUser) => {
+export const getUserById = async (
+  res: Response,
+  params: userType.GetUserById
+) => {
   logger.info("getUser service: start");
+  const { id } = params;
 
-  sendResponse(res, 200, { send: { message: "Todo list" } });
+  const user = await db.User.findOne({
+    where: { id },
+    attributes: {
+      exclude: ["password"],
+    },
+  });
+
+  if (!user) {
+    return sendResponse(res, 404, {
+      send: { message: "Cannot find user with id" },
+    });
+  }
+
+  sendResponse(res, 200, {
+    send: { message: "Succesfully fetched user details", data: { user } },
+  });
 };
 
 //========================================Modify============================================
@@ -48,7 +98,7 @@ export const createUser = async (
   if (duplicateUser?.length) {
     return sendResponse(res, 400, {
       send: {
-        message: "Validation faile",
+        message: "Validation failed",
         fieldError: {
           email: "User with this email already exists.",
         },
@@ -70,6 +120,6 @@ export const createUser = async (
   delete publicUser.password;
 
   sendResponse(res, 201, {
-    send: { message: "Fetch User successfully", data: { user: publicUser } },
+    send: { message: "User Created successfully", data: { user: publicUser } },
   });
 };
