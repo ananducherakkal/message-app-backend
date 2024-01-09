@@ -1,8 +1,10 @@
 import Sequelize from "sequelize";
 import User from "./user.model";
+import Message from "./message.model";
 
 type Db = {
   User: ReturnType<typeof User>;
+  Message: ReturnType<typeof Message>;
 };
 export const db: Db = {} as Db;
 
@@ -21,6 +23,7 @@ export const dbConnect = () => {
   );
 
   db.User = User(sequelize);
+  db.Message = Message(sequelize);
 
   // Log db connection status
   sequelize
